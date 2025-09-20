@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio Marques</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Brownsugar&display=swap" rel="stylesheet" />
+
+  <style>
+    /* --- CONFIGURAÇÕES GERAIS E NOVA PALETA DE CORES --- */
+    body, h1, h2, h3, p, ul {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #121212; /* Cinza escuro ao invés de preto puro */
+      color: #f1f1f1; /* Branco suave */
+      font-family: 'Montserrat', sans-serif; /* Nova fonte padrão para leitura */
+      scroll-behavior: smooth;
+    }
+
+    /* --- TELA INICIAL COM MENU --- */
+    #tela-inicial {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px; /* Espaçamento ajustado */
+      text-align: center;
+      padding: 5px;
+    }
+    #tela-inicial .logo {
+      width: 300px; /* Levemente ajustado */
+      border-radius: 50%;
+      margin-bottom: -70px;
+      
+    }
+    #tela-inicial h1 {
+      margin-bottom: 20px;
+    }
+    #tela-inicial button {
+      padding: 15px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      background: #968b60ff; /* Tom dourado/bege */
+      color: #121212; /* Texto escuro para contraste */
+      border: none;
+      border-radius: 50px; /* Botões arredondados */
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: auto;
+      min-width: 220px;
+    }
+    #tela-inicial button:hover {
+      background: #dfd297ff; /* Tom mais claro no hover */
+      transform: scale(1.05); /* Efeito de crescimento */
+    }
+
+    /* --- ESTRUTURA DAS SEÇÕES --- */
+    section {
+      display: none;
+      padding: 60px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    section.ativo {
+      display: block;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    /* --- BOTÃO VOLTAR --- */
+    .btn-voltar {
+      display: inline-block;
+      margin-bottom: 30px;
+      padding: 10px 20px;
+      background: #968b60ff;
+      border: none;
+      color: #121212;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-voltar:hover {
+      background: #dfd297ff;
+      transform: scale(1.05);
+    }
+    
+    /* --- TÍTULOS E TEXTOS GERAIS --- */
+    .logo {
+      width: 160px;
+      border-radius: 50%;
+      animation: fadeIn 1s ease-in;
+      margin: 0 auto 20px auto;
+      display: block;
+    }
+    h2 {
+      font-size: 2.2em;
+      text-align: center;
+      margin-bottom: 40px;
+      color: #968b60ff; /* Cor de destaque nos títulos */
+    }
+
+    /* --- FORMULÁRIO DE AGENDAMENTO --- */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    label {
+      color: #ccc;
+      font-size: 0.9em;
+    }
+    input, select, textarea {
+      background-color: #1f1f1f;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 1em;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.3s ease;
+    }
+    /* Estilo para o foco dos inputs */
+    input:focus, select:focus, textarea:focus {
+      border-color: #c5b358;
+      box-shadow: 0 0 8px rgba(197, 179, 88, 0.5);
+      outline: none;
+    }
+    button[type="submit"] {
+      background: #968b60ff;
+      color: #121212;
+      font-weight: bold;
+      padding: 15px;
+      font-size: 1.1em;
+      border-radius: 6px;
+      border: none;
+      transition: 0.3s;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+    }
+    button[type="submit"]:hover {
+      background: #dcd08a;
+    }
+
+    /* --- CARDS DE SERVIÇOS --- */
+    .servicos-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .servico-card {
+      background: #1f1f1f;
+      border: 1px solid #c5b358;
+      border-radius: 10px;
+      padding: 20px;
+      width: 260px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .servico-card:hover {
+      transform: translateY(-5px); /* Efeito de elevação */
+      box-shadow: 0 5px 15px rgba(197, 179, 88, 0.3);
+    }
+    .servico-card h3 {
+      text-align: center;
+      color: #f1f1f1;
+      margin-bottom: 10px;
+    }
+    .servico-card p {
+      color: #ccc;
+      font-size: 0.95em;
+      text-align: center;
+    }
+
+    /* --- SEÇÃO HISTÓRIA --- */
+    .history-box {
+      background-color: #1f1f1f;
+      border: 1px solid #c5b358;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 800px;
+      margin: 40px auto;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .history-box h2 { margin-bottom: 0; }
+    .history-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+      color: #ccc;
+      margin-top: 0;
+      line-height: 1.6;
+    }
+    .history-box.active .history-content {
+      max-height: 500px;
+      margin-top: 20px;
+    }
+
+    /* --- RODAPÉ --- */
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: #1f1f1f;
+      color: #777;
+      font-size: 0.9em;
+      margin-top: 50px;
+      border-top: 1px solid #333;
+    }
+    footer a {
+      color: #c5b358;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    footer a:hover { color: #fff; }
+    .instagram-icon {
+      width: 20px;
+      height: 20px;
+      fill: #c5b358;
+      transition: fill 0.3s;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+    footer a:hover .instagram-icon { fill: #fff; }
+    
+    /* --- FONTES PERSONALIZADAS ESPECÍFICAS --- */
+    @font-face {
+      font-family: 'Dear Script';
+      src: url('{{ url_for('static', filename='dear-script.woff') }}'),
+           url('dear-script.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    .dear-script {
+      font-family: 'Dear Script', 'Brownsugar', cursive;
+      font-size: 3.5em !important;
+      font-weight: normal;
+      color: #fff;
+    }
+
+    /* --- UTILITÁRIOS E ANIMAÇÕES --- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 600px) {
+      .servicos-grid {
+        flex-direction: column;
+        align-items: center;
+      }
+      .dear-script { font-size: 2.8em !important; }
+      h2 { font-size: 1.8em; }
+    }
+    
+    /* Altera a cor dos ícones de data e hora para branco */
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="tela-inicial">
+    <img src="{{ url_for('static', filename='foto.png') }}" alt="Logo Studio Marques" class="logo" /> 
+    <h1 class="dear-script">Studio Marques</h1>
+    <button data-target="agendamento">Agendar Horário</button>
+    <button data-target="servicos">Nossos Serviços</button>
+    <button data-target="historia">Nossa História</button>
+    <button data-target="localizacao">Localização</button>
+  </div>
+
+  <section id="agendamento">
+    <button class="btn-voltar">Voltar ao Menu</button>
+    <h2>Agende Seu Horário</h2>
+    <form method="POST" action="/">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="telefone">WhatsApp</label>
+      <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
+
+      <label for="profissional">Profissional</label>
+      <select id="profissional" name="profissional" required>
+        <option value="" disabled selected>Selecione uma profissional</option>
+        <option value="anne">Anne Katleen (Unhas)</option>
+        <option value="silesia">Silesia (Cabelo)</option>
+      </select>
+
+      <label for="servico">Serviço Desejado</label>
+      <select id="servico" name="servico" required>
+        <option value="" disabled selected>Selecione um serviço</option>
+      </select>
+
+      <label for="data">Data</label>
+      <input type="date" id="data" name="data" required>
+
+      <label for="hora">Horário</label>
+      <input type="time" id="hora" name="hora" required>
+
+      <label for="mensagem">Mensagem (opcional)</label>
+      <textarea id="mensagem" name="mensagem" rows="4" placeholder="Ex: quero fazer unhas decoradas."></textarea>
+
+      <button type="submit">Agendar via WhatsApp</button>
+    </form>
+  </section>
+
+  <section id="servicos">
+    <button class="btn-voltar">Voltar ao Menu</button>
+    <h2>Serviços</h2>
+    <div class="servicos-grid">
+      <div class="servico-card"><h3>Luzes</h3><p>Clareamento localizado em pequenas mechas para iluminar o rosto, dar profundidade e movimento. </p></div>
+      <div class="servico-card"><h3>Colorimetria</h3><p>Ciência das cores aplicada aos cabelos para escolher tons, neutralizar reflexos indesejados e harmonizar cor natural com pele. </p></div>
+      <div class="servico-card"><h3>Tratamento Capilar</h3><p>Intervenções focadas em reparar, hidratar ou nutrir os fios, corrigindo danos internos e externos.</p></div>
+      <div class="servico-card"><h3>Penteados</h3><p>estilos temporários com propósito estético ou funcional (eventos, cotidiano), respeitando textura e tipo de cabelo.</p></div>
+      <div class="servico-card"><h3>Escovas</h3><p>Alisamento temporário com escova + secador/prancha, modelando o fio e suavizando volume/frizz.</p></div>
+      <div class="servico-card"><h3>Corte</h3><p>Cortes modernos e clássicos, executados com precisão para valorizar seu rosto.</p></div>
+      <div class="servico-card"><h3>Cristalização Lipídica</h3><p>tratamento reconstrutor com lipídeos, creatina e nanopartículas que sela cutícula, reduz frizz e devolve brilho sem alisar agressivamente. </p></div>
+      <div class="servico-card"><h3>Alongamento em Gel</h3><p>Criação de extensão nas unhas naturais, para deixar o comprimento desejado. om manutenção a cada 15‑21dias( conforme necessidade previamente estabelecida pela profissional)</p></div>
+      <div class="servico-card"><h3>Banho de Gel</h3><p>Aplicação de camadas finas de gel sobre a unha natural (sem alongamento) para reforçar, nivelar e dar proteção extra as unhas naturais (Exige manutenção de 15-21 dias conforme necessidade previamente estabelecidas pela profissional).</p></div>
+      <div class="servico-card"><h3>Esmaltação em Gel</h3><p>Esmalte especial em gel, aplicado sobre a unha natural e ou alongamento com secagem na cabine podendo durar de 15-20 dias (conforme os cuidados da cliente em casa)</p></div>
+      <div class="servico-card"><h3>Blindagem</h3><p>Aplicação de uma camada finíssima de gel base para proteger a unha natural, fortalecendo‐a, sem alongar. Serve para evitar quebras e aumentar durabilidade do esmalte tradicional.</p></div>
+      <div class="servico-card"><h3>Pé e mão</h3><p>Manicure + pedicure completas, cuidando das unhas e pele das mãos e pés: corte, limpeza, hidratação, esmaltação tradicional </p></div>
+      <div class="servico-card"><h3>Manutenção alongamento</h3><p>Para cobrir o crescimento da raiz.Deve ser feita regularmente (cada 15‑21 dias)</p></div>
+      <div class="servico-card"><h3>Manutenção de outra profissional</h3><p>Podendo ser removida 80-90% do produto usando somente a estrutura já existente para uma nova aplicação de produto.</p></div>
+
+    </div>
+  </section>
+
+  <section id="historia">
+    <button class="btn-voltar">Voltar ao Menu</button>
+    <div class="history-box" onclick="this.classList.toggle('active')">
+      <h2>Clique para conhecer Nossa História</h2>
+      <div class="history-content">
+        <p>O Studio Marques nasceu da paixão pela beleza, pelo cuidado com o outro e pelo desejo de oferecer uma experiência única em um ambiente acolhedor e sofisticado.</p>
+        <p>Desde a nossa fundação, buscamos não apenas realçar a beleza exterior, mas também proporcionar momentos de bem-estar e autoestima para cada cliente que passa por aqui.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="localizacao">
+    <button class="btn-voltar">Voltar</button>
+    <h2>Estamos Aqui!</h2>
+    <p style="text-align:center; color:#ccc;">
+      Rua São Sebastião - Bairro Nossa Senhora do Perpétuo Socorro, Trindade-GO
+    </p>
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3822.3350138796623!2d-49.49797462485149!3d-16.660110784108234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935e671a6d302c7d%3A0x5f195e28f730938f!2sAnne%20Marques%20Unhas!5e0!3m2!1spt-BR!2sbr!4v1758144894347!5m2!1spt-BR!2sbr"
+      style="width: 100%; height: 400px; border: 0; border-radius: 8px;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+</section>
+
+  <footer>
+    <p>© 2025 Studio Marques - Todos os direitos reservados</p>
+    <p>
+      <a href="https://www.instagram.com/studiosamarques/" target="_blank" rel="noopener noreferrer">
+        <svg class="instagram-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.75 2A5.75 5.75 0 002 7.75v8.5A5.75 5.75 0 007.75 22h8.5A5.75 5.75 0 0022 16.25v-8.5A5.75 5.75 0 0016.25 2h-8.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6zm4.5-3a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5z"/></svg>
+        @studiosamarques
+      </a>
+    </p>
+  </footer>
+
+  <script>
+    // --- CONTROLE DE NAVEGAÇÃO ---
+    const telaInicial = document.getElementById('tela-inicial');
+    const botoesMenu = telaInicial.querySelectorAll('button');
+    const sessoes = document.querySelectorAll('section');
+    const botoesVoltar = document.querySelectorAll('.btn-voltar');
+
+    botoesMenu.forEach(botao => {
+      botao.addEventListener('click', () => {
+        const alvo = botao.getAttribute('data-target');
+        telaInicial.style.display = 'none';
+        sessoes.forEach(sec => sec.classList.remove('ativo'));
+        
+        const secaoMostrar = document.getElementById(alvo);
+        if (secaoMostrar) {
+          secaoMostrar.classList.add('ativo');
+          window.scrollTo(0, 0);
+        }
+      });
+    });
+
+    botoesVoltar.forEach(botao => {
+      botao.addEventListener('click', () => {
+        sessoes.forEach(sec => sec.classList.remove('ativo'));
+        telaInicial.style.display = 'flex';
+        window.scrollTo(0, 0);
+      });
+    });
+
+
+// --- LÓGICA DO FORMULÁRIO DE SERVIÇOS (AQUI FOI A MUDANÇA) ---
+
+// 1. A lista de serviços que estava aqui foi APAGADA.
+// Agora, esta linha recebe os dados diretamente do Python.
+const servicosPorProfissional = {{ profissionais | tojson }};
+
+const profissionalSelect = document.getElementById("profissional");
+const servicoSelect = document.getElementById("servico");
+
+function atualizarServicos() {
+  const profissionalSelecionada = profissionalSelect.value;
+  servicoSelect.innerHTML = '<option value="" disabled selected>Selecione um serviço</option>';
+
+  // 2. A lógica foi ajustada para ler a nova estrutura de dados
+  if (profissionalSelecionada && servicosPorProfissional[profissionalSelecionada]) {
+    // Acessamos a lista de "servicos" dentro do objeto da profissional
+    servicosPorProfissional[profissionalSelecionada].servicos.forEach(servico => {
+      const option = document.createElement("option");
+      option.value = servico;
+      option.textContent = servico;
+      servicoSelect.appendChild(option);
+    });
+  }
+}
+
+profissionalSelect.addEventListener("change", atualizarServicos);
+
+// Inicia a função para o caso de o navegador manter o valor antigo
+atualizarServicos();
+    
+    // Inicia a função para o caso de o navegador manter o valor antigo
+    atualizarServicos();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerir Clientes - Studio Marques</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #1a1a1a; color: #e0e0e0; font-family: 'Montserrat', sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1, h2 { color: #968b60ff; text-align: center; }
+        form { background-color: #2a2a2a; padding: 25px; border-radius: 8px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
+        label { font-weight: bold; margin-top: 5px; }
+        input, select, button, .btn { padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #3a3a3a; color: #e0e0e0; font-size: 1em; font-family: 'Montserrat', sans-serif; }
+        button, .btn { background-color: #968b60ff; color: #1a1a1a; font-weight: bold; cursor: pointer; transition: background-color 0.3s; border: none; text-align: center; text-decoration: none; display: inline-block; }
+        button:hover, .btn:hover { background-color: #ae9f71; }
+        .flash-success { padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #2e5c2c; color: #f1f1f1; text-align: center; border: 1px solid #5bc95b; font-weight: bold; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; margin-bottom: 20px; padding-bottom: 10px; }
+        .cliente-item { background-color: #2a2a2a; padding: 15px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .cliente-info { flex-grow: 1; }
+        .cliente-info p { margin: 0; }
+        .cliente-info span { font-size: 0.9em; color: #aaa; }
+        .btn-agendar { background-color: #25D366; color: white; }
+        .btn-agendar:hover { background-color: #128C7E; }
+        .btn-delete { background-color: #8b3a3a; color: white; padding: 5px 10px; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gerir Clientes</h1>
+            <a href="{{ url_for('admin') }}" class="btn">Voltar para a Agenda</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="flash-success">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+
+        <div class="form-container">
+            <h2>Adicionar Nova Cliente</h2>
+            <form method="POST" action="{{ url_for('add_client') }}">
+                <label for="nome">Nome da Cliente</label>
+                <input type="text" id="nome" name="nome" required>
+                
+                <label for="telefone">Telefone (com 55 e DDD)</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="5562999998888" required>
+
+                <label for="servico_preferencial">Serviço Principal (opcional)</label>
+                <input type="text" id="servico_preferencial" name="servico_preferencial" placeholder="Ex: Manutenção de Gel">
+
+                <button type="submit">Salvar Cliente</button>
+            </form>
+        </div>
+
+        <div class="lista-container">
+            <h2>Clientes Cadastradas</h2>
+            <ul style="list-style: none; padding: 0;">
+                {% for cliente in clientes %}
+                <li class="cliente-item">
+                    <div class="cliente-info">
+                        <p><strong>{{ cliente.nome }}</strong></p>
+                        <span>{{ cliente.telefone }} | Serviço: {{ cliente.servico_preferencial or 'Nenhum' }}</span>
+                    </div>
+                    <div>
+                        <!-- O link de agendar ainda não é funcional, será o próximo passo -->
+                        <a href="{{ url_for('admin', cliente_id=cliente.id) }}" class="btn btn-agendar" style="margin-right: 10px;">Agendar</a>
+                        <form action="{{ url_for('delete_client', client_id=cliente.id) }}" method="POST" style="display: inline-block;">
+                            <button type="submit" class="btn-delete">Remover</button>
+                        </form>
+                    </div>
+                </li>
+                {% else %}
+                <li class="cliente-item">Nenhuma cliente cadastrada.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

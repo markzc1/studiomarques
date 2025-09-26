@@ -7,116 +7,165 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
     <style>
-        body { background-color: #1a1a1a; color: #e0e0e0; font-family: 'Montserrat', sans-serif; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1, h2 { color: #968b60ff; text-align: center; }
-        form { background-color: #2a2a2a; padding: 25px; border-radius: 8px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        :root {
+            --fc-border-color: #444;
+            --fc-daygrid-cell-misc-color: #777;
+            --fc-event-bg-color: #968b60ff;
+            --fc-event-border-color: #8a7d51;
+            --fc-now-indicator-color: #ff4d4d;
+            --fc-page-bg-color: #2a2a2a;
+            --fc-neutral-bg-color: #2a2a2a;
+            --fc-list-even-row-bg-color: #3a3a3a;
+            --fc-list-day-text-color: #968b60ff;
+        }
+        body { background-color: #1a1a1a; color: #e0e0e0; font-family: 'Montserrat', sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1, h2, h3 { color: #968b60ff; text-align: center; }
+        .admin-layout { display: grid; grid-template-columns: 380px 1fr; gap: 30px; margin-top: 20px;}
+        form { background-color: #2a2a2a; padding: 25px; border-radius: 8px; display: flex; flex-direction: column; gap: 15px; }
         label { font-weight: bold; margin-top: 5px; }
         input, select, button, .btn { padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #3a3a3a; color: #e0e0e0; font-size: 1em; font-family: 'Montserrat', sans-serif; }
         button, .btn { background-color: #968b60ff; color: #1a1a1a; font-weight: bold; cursor: pointer; transition: background-color 0.3s; border: none; text-align: center; text-decoration: none; }
-        button:hover, .btn:hover { background-color: #968b60ff; }
-        .agendamentos-lista { list-style: none; padding: 0; }
-        .agendamento-item { background-color: #2a2a2a; padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 5px solid #968b60ff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .agendamento-info { flex-grow: 1; }
-        .confirmar-btn { padding: 8px 12px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px; font-size: 0.9em; white-space: nowrap; transition: background-color 0.3s; }
-        .confirmar-btn:hover { background-color: #128C7E; }
+        button:hover, .btn:hover { background-color: #ae9f71; }
         .flash-success { padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #2e5c2c; color: #f1f1f1; text-align: center; border: 1px solid #5bc95b; font-weight: bold; }
-        #servico_outro_wrapper { display: none; }
-        .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; margin-bottom: 20px; }
-        /* Estilos do Modal (Pop-up) */
+        .flash-error { padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #8b3a3a; color: white; text-align: center; border: 1px solid #c95b5b; font-weight: bold;}
+        .header-admin { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; margin-bottom: 20px; padding-bottom: 10px; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background-color: #2a2a2a; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; position: relative; }
-        .modal-close { position: absolute; top: 10px; right: 15px; font-size: 2em; cursor: pointer; color: #aaa; }
+        .modal-content { background-color: #2a2a2a; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 10px; right: 15px; font-size: 2em; cursor: pointer; color: #aaa; z-index: 1004; }
+        .btn-delete { background-color: #8b3a3a; color: white; }
+        #calendar { background-color: #2a2a2a; padding: 20px; border-radius: 8px; color: #e0e0e0; }
+        .fc-event { font-size: 0.8em; cursor: pointer; }
+        #event-details-content p { margin: 0 0 12px 0; line-height: 1.6; font-size: 1.1em; }
+        #event-details-content strong { color: #968b60ff; }
+        .confirmar-btn { background-color: #25D366; color: white; width: 100%; box-sizing: border-box; margin-top: 20px; }
+        .cancelar-btn { background-color: #c94a4a; color: white; width: 100%; box-sizing: border-box; margin-top: 10px; }
+        .fab { display: none; }
         .servicos-lista-modal { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; padding-right: 10px; }
         .servico-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 5px; margin-bottom: 5px; background-color: #3a3a3a; }
-        .btn-delete { background-color: #8b3a3a; color: white; padding: 5px 10px; font-size: 0.8em; border-radius: 4px; border: none; cursor: pointer; }
-        /* Adicione este código para mudar a cor dos ícones de data e hora */
-       input[type="date"]::-webkit-calendar-picker-indicator,
-       input[type="time"]::-webkit-calendar-picker-indicator {
-      filter: invert(1); /* Inverte a cor do ícone (preto vira branco) */
-      cursor: pointer;   /* Faz o mouse virar uma "mãozinha" */
-}
+        .desktop-buttons { display: block; }
+        .mobile-menu-btn { display: none; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header-admin { flex-direction: row; }
+            h1 { font-size: 1.5em; text-align: left; flex-grow: 1; }
+            .desktop-buttons { display: none; }
+            .fab { display: flex; justify-content: center; align-items: center; width: 60px; height: 60px; background-color: #968b60ff; color: #1a1a1a; border-radius: 50%; font-size: 2em; position: fixed; bottom: 20px; right: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: none; cursor: pointer; z-index: 999; }
+            #calendar { padding: 5px; }
+            .fc .fc-toolbar-title { font-size: 1.1em !important; }
+            .fc .fc-col-header-cell-cushion { font-size: 0.7em; padding: 2px 1px; }
+            .fc .fc-timegrid-slot-label { font-size: 0.65em; }
+            .fc-event { font-size: 0.65em; }
+            .fc .fc-button { padding: 3px 6px; font-size: 0.8em; }
+
+            .mobile-menu-btn { display: block; background: none; border: none; cursor: pointer; padding: 0; z-index: 1002; }
+            .mobile-menu-btn .line { display: block; width: 25px; height: 3px; background-color: #e0e0e0; margin: 5px 0; transition: all 0.3s ease; }
+            
+            .mobile-nav-panel { position: fixed; top: 0; right: -300px; width: 250px; height: 100%; background-color: #2a2a2a; z-index: 1003; transition: right 0.3s ease; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); }
+            .mobile-nav-panel.is-open { right: 0; }
+            .mobile-nav-panel h3 { margin-top: 40px; }
+            .mobile-nav-panel .btn, .mobile-nav-panel a.btn { width: 100%; margin-bottom: 40px; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-admin">
-            <h1>Painel de Controle</h1>
-            <button class="btn" id="open-modal-btn">Gerenciar Serviços</button>
+            <h1>Painel: {{ PROFISSIONAIS[session['user_id']].nome }}</h1>
+            <div class="desktop-buttons">
+                <a href="{{ url_for('clientes') }}" class="btn" style="margin-right: 10px;">Clientes</a>
+                <button class="btn" id="open-services-modal-btn" style="margin-right: 10px;">Gerenciar Serviços</button>
+                <button class="btn" id="add-commitment-btn" style="background-color: #555; margin-right: 10px;">Novo Compromisso</button>
+                <a href="{{ url_for('logout') }}" class="btn btn-delete">Sair</a>
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <span class="line"></span><span class="line"></span><span class="line"></span>
+            </button>
         </div>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
-                {% if category == 'success' %} <div class="flash-success">{{ message }}</div> {% endif %}
+                <div class="flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
             {% endfor %}
         {% endwith %}
 
-        <h2>Adicionar Novo Agendamento</h2>
-        <form method="POST" action="{{ url_for('admin') }}">
-            <label for="profissional">Profissional</label>
-            <select id="profissional" name="profissional" required>
-                <option value="anne">Anne Katleen (Unhas)</option>
-                <option value="silesia">Silesia (Cabelo)</option>
-            </select>
-
-            <label for="cliente_nome">Nome do Cliente</label>
-            <input type="text" id="cliente_nome" name="cliente_nome" required>
-
-            <label for="cliente_telefone">Telefone do Cliente (com 55 e DDD)</label>
-            <input type="tel" id="cliente_telefone" name="cliente_telefone" placeholder="5562999998888" required>
-
-            <label for="servico">Serviço</label>
-            <select id="servico" name="servico" required onchange="handleServicoChange(this)">
-                <option value="" disabled selected>Selecione um serviço</option>
-                <option value="outro">Outro...</option>
-            </select>
-
-            <div id="servico_outro_wrapper">
-                <label for="servico_outro">Especifique o serviço</label>
-                <input type="text" id="servico_outro" name="servico_outro">
-            </div>
-
-            <label for="data">Data</label>
-            <input type="date" id="data" name="data" required>
-
-            <label for="hora">Hora</label>
-            <input type="time" id="hora" name="hora" required>
-
-            <button type="submit">Salvar Agendamento</button>
-        </form>
-
-        <h2>Agendamentos Confirmados</h2>
-        <ul class="agendamentos-lista">
-            {% for agendamento in agendamentos %}
-                <li class="agendamento-item">
-                    <div class="agendamento-info">
-                        <strong>{{ agendamento.data.strftime('%d/%m/%Y') }} às {{ agendamento.hora.strftime('%H:%M') }}</strong>
-                        - {{ agendamento.cliente_nome }} ({{ agendamento.servico }}) com 
-                        <strong>{{ "Anne" if agendamento.profissional_id == 'anne' else "Silesia" }}</strong>
-                    </div>
-                    
-                    {% set mensagem_wpp = "Olá " + agendamento.cliente_nome + "! Seu agendamento para " + agendamento.servico + " no dia " + agendamento.data.strftime('%d/%m') + " às " + agendamento.hora.strftime('%H:%M') + " está confirmado. Te aguardo! Atenciosamente, Studio Marques ✅" %}
-                    {% set link_wpp = "https://wa.me/" + agendamento.cliente_telefone + "?text=" + mensagem_wpp | urlencode %}
-                    
-                    <a href="{{ link_wpp }}" target="_blank" class="confirmar-btn">Confirmar com Cliente</a>
-                </li>
-            {% else %}
-                <li class="agendamento-item">Nenhum agendamento encontrado.</li>
-            {% endfor %}
-        </ul>
+        <div class="calendar-container">
+            <h2>Agenda</h2>
+            <div id='calendar'></div>
+        </div>
     </div>
 
-    <div class="modal-overlay" id="servicos-modal">
+    <!-- Botão Flutuante para Adicionar Agendamento -->
+   <!-- <button class="fab" id="fab-add-btn">+</button>-->
+
+    <!-- Painel de Navegação Móvel -->
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+    <button class="modal-close" id="close-nav-btn">&times;</button>
+    <h3>Menu</h3>
+    <button class="btn" id="mobile-commitment-btn" style="background-color: #555;">Novo Compromisso</button>
+    <button class="btn" id="mobile-appointment-btn">Novo Agendamento</button>
+    <button class="btn" id="mobile-services-btn">Gerenciar Serviços</button>
+                       <a href="{{ url_for('clientes') }}" class="btn">Clientes</a>
+    
+    <hr style="border-color: #444; margin: 20px 0;">
+    <a href="{{ url_for('logout') }}" class="btn btn-delete">Sair</a>
+</div>
+
+    <!-- Modais (pop-ups) -->
+    <div class="modal-overlay" id="agendamento-modal">
         <div class="modal-content">
-            <span class="modal-close" id="close-modal-btn">&times;</span>
-            <h2>Gerenciar Serviços</h2>
-            <form action="{{ url_for('add_service') }}" method="POST">
-                <label for="profissional_id">Profissional</label>
-                <select id="profissional_id" name="profissional_id" required>
-                    <option value="anne">Anne Katleen</option>
-                    <option value="silesia">Silesia</option>
+            <span class="modal-close" data-modal-id="agendamento-modal">&times;</span>
+            <h2>Adicionar Novo Agendamento</h2>
+            <form method="POST" action="{{ url_for('admin') }}">
+                <label for="cliente_nome">Nome do Cliente</label>
+                <input type="text" id="cliente_nome" name="cliente_nome" required>
+                <label for="cliente_telefone">Telefone (com 55 e DDD)</label>
+                <input type="tel" id="cliente_telefone" name="cliente_telefone" placeholder="5562999998888" required>
+                <label for="servico">Serviço</label>
+                <select id="servico" name="servico" required onchange="handleServicoChange(this)">
+                    <option value="" disabled selected>Selecione um serviço</option>
+                    <option value="outro">Outro...</option>
                 </select>
+                <div id="servico_outro_wrapper" style="display: none;">
+                    <label for="servico_outro">Especifique o serviço</label>
+                    <input type="text" id="servico_outro" name="servico_outro">
+                </div>
+                <label for="data">Data</label>
+                <input type="date" id="data" name="data" required>
+                <label for="hora">Hora</label>
+                <input type="time" id="hora" name="hora" required>
+                <label for="duracao">Duração (minutos)</label>
+                <input type="number" id="duracao" name="duracao" required value="30">
+                <button type="submit">Salvar Agendamento</button>
+            </form>
+        </div>
+    </div>
+    <div class="modal-overlay" id="compromisso-modal">
+        <div class="modal-content">
+            <span class="modal-close" data-modal-id="compromisso-modal">&times;</span>
+            <h2>Adicionar Novo Compromisso</h2>
+            <form method="POST" action="{{ url_for('add_compromisso') }}">
+                <label for="compromisso_nome">Descrição</label>
+                <input type="text" id="compromisso_nome" name="compromisso_nome" required>
+                <label for="data_compromisso">Data</label>
+                <input type="date" id="data_compromisso" name="data" required>
+                <label for="hora_compromisso">Hora</label>
+                <input type="time" id="hora_compromisso" name="hora" required>
+                <label for="duracao_compromisso">Duração (minutos)</label>
+                <input type="number" id="duracao_compromisso" name="duracao" required value="30">
+                <button type="submit">Salvar Compromisso</button>
+            </form>
+        </div>
+    </div>
+    <div class="modal-overlay" id="servicos-modal">
+         <div class="modal-content">
+            <span class="modal-close" data-modal-id="servicos-modal">&times;</span>
+            <h2>Gerenciar Meus Serviços</h2>
+            <form action="{{ url_for('add_service') }}" method="POST">
+                <input type="hidden" name="profissional_id" value="{{ session['user_id'] }}">
                 <label for="nome_servico">Nome do Novo Serviço</label>
                 <input type="text" id="nome_servico" name="nome_servico" required>
                 <button type="submit">Adicionar Serviço</button>
@@ -125,72 +174,174 @@
             <h3>Serviços Atuais</h3>
             <ul class="servicos-lista-modal">
                 {% for servico in servicos %}
-                <li class="servico-item">
-                    <span>{{ servico.nome }} ({{ "Anne" if servico.profissional_id == 'anne' else "Silesia" }})</span>
-                    <form action="{{ url_for('delete_service', service_id=servico.id) }}" method="POST" style="margin: 0;">
-                        <button type="submit" class="btn-delete">Deletar</button>
-                    </form>
-                </li>
-                {% else %}
-                <li class="servico-item">Nenhum serviço cadastrado.</li>
+                    {% if servico.profissional_id == session['user_id'] %}
+                    <li class="servico-item">
+                        <span>{{ servico.nome }}</span>
+                        <form action="{{ url_for('delete_service', service_id=servico.id) }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="btn-delete">Deletar</button>
+                        </form>
+                    </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </div>
     </div>
+    <div class="modal-overlay" id="event-details-modal">
+        <div class="modal-content">
+            <span class="modal-close" data-modal-id="event-details-modal">&times;</span>
+            <h2 id="details-title">Detalhes</h2>
+            <div id="event-details-content"></div>
+            <a href="#" id="confirmar-wpp-btn" target="_blank" class="btn confirmar-btn">Confirmar com Cliente</a>
+            <form id="delete-appointment-form" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar este evento?');">
+                <button type="submit" class="btn cancelar-btn">Cancelar Evento</button>
+            </form>
+        </div>
+    </div>
     
     <script>
-        // Lógica para o dropdown de serviços no formulário de agendamento
-        const todosServicos = {{ servicos | tojson }};
-        const profissionalSelect = document.getElementById('profissional');
-        const servicoSelect = document.getElementById('servico');
-
-        function atualizarServicosDisponiveis() {
-            const profissionalId = profissionalSelect.value;
-            while (servicoSelect.options.length > 2) {
-                servicoSelect.remove(1);
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = {{ session['user_id'] | tojson }};
+            const todosServicos = {{ servicos | tojson }};
+            const servicoSelect = document.getElementById('servico');
+            
+            function atualizarServicosDisponiveis() {
+                const profissionalId = loggedInUser;
+                while (servicoSelect.options.length > 2) servicoSelect.remove(1);
+                const servicosDaProfissional = todosServicos.filter(s => s.profissional_id === profissionalId);
+                servicosDaProfissional.forEach(servico => {
+                    const option = document.createElement('option');
+                    option.value = servico.nome;
+                    option.textContent = servico.nome;
+                    servicoSelect.insertBefore(option, servicoSelect.options[servicoSelect.options.length - 1]);
+                });
             }
-            const servicosDaProfissional = todosServicos.filter(s => s.profissional_id === profissionalId);
-            servicosDaProfissional.forEach(servico => {
-                const option = document.createElement('option');
-                option.value = servico.nome;
-                option.textContent = servico.nome;
-                servicoSelect.insertBefore(option, servicoSelect.options[servicoSelect.options.length - 1]);
+
+            function handleServicoChange(select) {
+                const outroWrapper = document.getElementById('servico_outro_wrapper');
+                const outroInput = document.getElementById('servico_outro');
+                outroWrapper.style.display = select.value === 'outro' ? 'block' : 'none';
+                outroInput.required = select.value === 'outro';
+            }
+            
+            servicoSelect.addEventListener('change', () => handleServicoChange(servicoSelect));
+
+            const modals = {
+                'servicos-modal': document.getElementById('servicos-modal'),
+                'agendamento-modal': document.getElementById('agendamento-modal'),
+                'compromisso-modal': document.getElementById('compromisso-modal'),
+                'event-details-modal': document.getElementById('event-details-modal')
+            };
+
+            function openModal(modalId) { if(modals[modalId]) modals[modalId].style.display = 'flex'; }
+            function closeModal(modalId) { if(modals[modalId]) modals[modalId].style.display = 'none'; }
+            
+            document.getElementById('open-services-modal-btn').addEventListener('click', () => openModal('servicos-modal'));
+            
+            const fab = document.getElementById('fab-add-btn');
+            if (fab) fab.addEventListener('click', () => openModal('agendamento-modal'));
+            
+            const addAppointmentBtn = document.getElementById('add-appointment-btn');
+            if(addAppointmentBtn) addAppointmentBtn.addEventListener('click', () => openModal('agendamento-modal'));
+            
+            const addCommitmentBtn = document.getElementById('add-commitment-btn');
+            if(addCommitmentBtn) addCommitmentBtn.addEventListener('click', () => openModal('compromisso-modal'));
+            
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.dataset.modalId));
             });
-        }
+            window.addEventListener('click', e => {
+                if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+            });
 
-        function handleServicoChange(select) {
-            const outroWrapper = document.getElementById('servico_outro_wrapper');
-            const outroInput = document.getElementById('servico_outro');
-            if (select.value === 'outro') {
-                outroWrapper.style.display = 'block';
-                outroInput.required = true;
-            } else {
-                outroWrapper.style.display = 'none';
-                outroInput.required = false;
-            }
-        }
+            const mobileNavPanel = document.getElementById('mobile-nav-panel');
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                mobileNavPanel.classList.add('is-open');
+            });
+            document.getElementById('close-nav-btn').addEventListener('click', () => {
+                mobileNavPanel.classList.remove('is-open');
+            });
+            document.getElementById('mobile-appointment-btn').addEventListener('click', () => {
+                mobileNavPanel.classList.remove('is-open');
+                openModal('agendamento-modal');
+            });
+            document.getElementById('mobile-services-btn').addEventListener('click', () => {
+                mobileNavPanel.classList.remove('is-open');
+                openModal('servicos-modal');
+            });
+             document.getElementById('mobile-commitment-btn').addEventListener('click', () => {
+                mobileNavPanel.classList.remove('is-open');
+                openModal('compromisso-modal');
+            });
 
-        profissionalSelect.addEventListener('change', atualizarServicosDisponiveis);
-        atualizarServicosDisponiveis();
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'pt-br',
+                initialView: window.innerWidth <= 768 ? 'timeGridWeek' : 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                    
+                },
+                height: '80vh',
+                allDaySlot: false,
+                events: {{ eventos_calendario | tojson }},
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+                    const eventId = info.event.id;
+                    const detailsContent = document.getElementById('event-details-content');
+                    const wppBtn = document.getElementById('confirmar-wpp-btn');
+                    const deleteForm = document.getElementById('delete-appointment-form');
+                    const detailsTitle = document.getElementById('details-title');
+                    
+                    const startTime = info.event.start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    const endTime = info.event.end.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-        // Lógica para o Modal de Gerenciar Serviços
-        const openModalBtn = document.getElementById('open-modal-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const modal = document.getElementById('servicos-modal');
+                    if (props.tipo === 'cliente') {
+                        detailsTitle.textContent = "Detalhes do Agendamento";
+                        detailsContent.innerHTML = `<p><strong>Cliente:</strong> ${props.cliente_nome}</p><p><strong>Serviço:</strong> ${props.servico}</p><p><strong>Horário:</strong> ${props.data}, das ${startTime} às ${endTime}</p>`;
+                        wppBtn.style.display = 'block';
+                        const mensagemWpp = `Olá ${props.cliente_nome}! Seu agendamento para ${props.servico} no dia ${props.data}, das ${startTime} às ${endTime}, está confirmado. Te aguardo! Atenciosamente, Studio Marques ✅`;
+                        wppBtn.href = `https://wa.me/${props.cliente_telefone}?text=${encodeURIComponent(mensagemWpp)}`;
+                    } else {
+                        detailsTitle.textContent = "Detalhes do Compromisso";
+                        detailsContent.innerHTML = `<p><strong>Compromisso:</strong> ${props.servico}</p><p><strong>Horário:</strong> ${props.data}, das ${startTime} às ${endTime}</p>`;
+                        wppBtn.style.display = 'none';
+                    }
+                    deleteForm.action = `/admin/delete_appointment/${eventId}`;
+                    openModal('event-details-modal');
+                }
+            });
+            calendar.render();
+            
+            atualizarServicosDisponiveis();
 
-        openModalBtn.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-
-        closeModalBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
+            const clienteParaAgendar = {{ cliente_para_agendar | tojson if cliente_para_agendar else 'null' }};
+            if (clienteParaAgendar) {
+                openModal('agendamento-modal');
+                document.getElementById('cliente_nome').value = clienteParaAgendar.nome;
+                document.getElementById('cliente_telefone').value = clienteParaAgendar.telefone;
+                
+                const servicoPreferencial = clienteParaAgendar.servico_preferencial;
+                let servicoEncontrado = false;
+                
+                setTimeout(() => {
+                    for (let i = 0; i < servicoSelect.options.length; i++) {
+                        if (servicoSelect.options[i].value === servicoPreferencial) {
+                            servicoSelect.selectedIndex = i;
+                            servicoEncontrado = true;
+                            break;
+                        }
+                    }
+                    if (!servicoEncontrado && servicoPreferencial) {
+                        servicoSelect.value = 'outro';
+                        handleServicoChange(servicoSelect);
+                        document.getElementById('servico_outro').value = servicoPreferencial;
+                    }
+                }, 100);
             }
         });
     </script>
 </body>
 </html>
+
